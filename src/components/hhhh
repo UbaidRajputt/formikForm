@@ -1,0 +1,7 @@
+export const customInputForm = ({
+  field,
+  form: { touched, errors },
+  ...props
+}) => (
+
+);

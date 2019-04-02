@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import { Container, Row, Col, FormGroup, Alert } from "react-bootstrap";
+
 import { customInputForm } from "./customInputs";
 import Select from "./customSingleDropdown";
 import SingleDater from "./singleDatePicker";

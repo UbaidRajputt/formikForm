@@ -22,6 +22,10 @@ class Select extends Component {
             </option>
           ))}
         </select>
+        {!!this.props.error &&
+          this.props.touched && (
+            <div style={{ color: 'red', marginTop: '.5rem' }}>{this.props.error}</div>
+          )}
       </div>
     );
   }

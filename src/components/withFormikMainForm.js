@@ -1,7 +1,6 @@
-import React, { Component } from "react";
-import { withFormik, Field, Form } from "formik";
+import React, { Component,TextField } from "react";
+import { withFormik, Field, Form, FieldArray  } from "formik";
 import { customInputForm } from "./customInputs";
-import { FormGroup } from "react-bootstrap";
 import * as Yup from "yup";
 import SingleDater from "./singleDatePicker";
 import Select from "./customSingleDropdown";
@@ -9,13 +8,16 @@ import RangeDater from "./customRangeDatePicker";
 import "react-dates/initialize";
 import "react-dates/lib/css/_datepicker.css";
 import CustomMultipleSelect from "./customMultipeSelect";
-
+import Image from "./imageUploader";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import PhoneNumber from './PhoneNumbers';
+import { Row, FormGroup } from "react-bootstrap";
 
 const styles = {
   color: "red",
   fontSize: "15px"
 };
+
 const options = [
   { value: "chocolate", label: "Chocolate" },
   { value: "strawberry", label: "Strawberry" },
@@ -34,6 +36,7 @@ const multipleOptions = [
 var strongPassRegex = new RegExp(
   "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})"
 );
+
 var strongNameRegex = new RegExp("^[A-Za-z]+$");
 function getValidationSchema(values) {
   return Yup.object().shape({
@@ -82,6 +85,7 @@ function getValidationSchema(values) {
       )
   });
 }
+
 function getErrorsFromValidationError(validationError) {
   const FIRST_ERROR = 0;
   return validationError.inner.reduce((errors, error) => {
@@ -91,19 +95,27 @@ function getErrorsFromValidationError(validationError) {
     };
   }, {});
 }
+
 class MyForm extends Component {
   state = {
     modal: false,
     passwordsMatch: false,
     disabled: false,
     divDisabled: false,
-    popupFieldDisabled: false
+    popupFieldDisabled: false,
+    showComponent: false,
+    modalTwo: false
   };
   toggle = () => {
     this.setState(prevState => ({
       modal: !prevState.modal
     }));
     this.setState({ disabled: true });
+  };
+  toggleTwo = () => {
+    this.setState(prevState => ({
+      modalTwo: !prevState.modalTwo
+    }));
   };
   render() {
     const {
@@ -122,7 +134,6 @@ class MyForm extends Component {
       values.password = values.newpass;
       this.setState({ disabled: false });
       this.setState({ divDisabled: false });
-    } else {
     }
     return (
       <Form onSubmit={handleSubmit}>
@@ -258,6 +269,27 @@ class MyForm extends Component {
           )}
         </FormGroup>
         <FormGroup>
+          <Button onClick={this.toggleTwo}>Add Phone Numbers</Button>
+          {this.state.modalTwo === true ? (
+            <Modal isOpen={this.state.modalTwo} toggle={this.toggleTwo}>
+              <ModalHeader>Add Phone Numbers</ModalHeader>
+              <ModalBody>
+                <FormGroup>
+                  <Field name='PhoneNumbers' component={PhoneNumber}/>
+                </FormGroup>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="primary" onClick={this.toggleTwo}>
+                  Close
+                </Button>{" "}
+              </ModalFooter>
+            </Modal>
+          ) : null}
+        </FormGroup>
+        <FormGroup>
+          <Image />
+        </FormGroup>
+        <FormGroup>
           <Button type="submit" size="lg" color="success">
             Submit
           </Button>
@@ -278,7 +310,14 @@ const MyEnhancedForm = withFormik({
     renternewpass: "",
     newpass: "",
     oldpass: "",
-    topics: []
+    topics: [],
+    PhoneNumbers: [
+      {
+          New: "",
+          Recheck: "",
+      }
+  ],
+
   }),
 
   // Custom sync validation
@@ -293,12 +332,11 @@ const MyEnhancedForm = withFormik({
   },
   handleSubmit: (values, { setSubmitting }) => {
     setTimeout(() => {
+      console.log("Values of PhoneNumber ", values.PhoneNumber);
       alert(JSON.stringify(values, null, 2));
-      values.topics.map(item => console.log(item.value));
       setSubmitting(false);
     }, 1000);
   },
-
   displayName: "BasicForm"
 })(MyForm);
 export default MyEnhancedForm;

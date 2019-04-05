@@ -2,16 +2,20 @@ import React, { Component } from "react";
 import { SingleDatePicker } from "react-dates";
 import moment from "moment";
 import isInclusivelyAfterDay from "moment";
+import idLocale from "moment/locale/id";
+import esLocale from "moment/locale/es";
 
 class SingleDater extends Component {
   constructor(props) {
     super(props);
+    this.someMethod = this.someMethod.bind(this);
     this.range(1900, 2019);
   }
   state = {
     date: null,
     focused: null,
-    yearArr: []
+    yearArr: [],
+    langSelection: "Date"
   };
   range(start, end) {
     for (let i = start; i <= end; i++) {
@@ -27,7 +31,9 @@ class SingleDater extends Component {
           onChange={e => onMonthSelect(month, e.target.value)}
         >
           {moment.months().map((label, value) => (
-            <option key={value} value={value}>{label}</option>
+            <option key={value} value={value}>
+              {label}
+            </option>
           ))}
         </select>
       </div>
@@ -47,9 +53,17 @@ class SingleDater extends Component {
   );
 
   render() {
+    if (this.state.langSelection === "Tanggal") {
+      moment.updateLocale("id", idLocale);
+    } else if (this.state.langSelection === "Fecha") {
+      moment.updateLocale("es", esLocale);
+    } else {
+      moment.locale("en");
+    }
     return (
       <div>
         <SingleDatePicker
+          placeholder={this.state.langSelection}
           id={this.props.field.name} // momentPropTypes.momentObj or null
           date={this.state.date}
           onDateChange={date => {
@@ -62,8 +76,17 @@ class SingleDater extends Component {
           renderMonthElement={this.renderMonthElement}
           isOutsideRange={day => !isInclusivelyAfterDay(day, moment())}
         />
+        <select onChange={this.someMethod}>
+          <option value="Date">select an option</option>
+          <option value="Tanggal">Indonesian</option>
+          <option value="Fecha">Spanish</option>
+        </select>
       </div>
     );
+  }
+  someMethod(e) {
+    this.setState({ langSelection: e.target.value }, () => {
+    });
   }
 }
 

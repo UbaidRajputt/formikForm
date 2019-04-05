@@ -16,8 +16,8 @@ class RangeDater extends Component {
     endDate: null,
     yearArr: [],
     langSelection: "",
-    startTrans:'Start Date',
-    endTrans:'End Date'
+    startTrans: "Start Date",
+    endTrans: "End Date"
   };
   range(start, end) {
     for (let i = start; i <= end; i++) {
@@ -79,7 +79,7 @@ class RangeDater extends Component {
           isOutsideRange={day => !isInclusivelyAfterDay(day, moment())}
           numberOfMonths={1}
         />
-         <select onChange={this.someMethod}>
+        <select onChange={this.someMethod}>
           <option value="Date">select an option</option>
           <option value="Tanggal">Indonesian</option>
           <option value="Fecha">Spanish</option>
@@ -87,20 +87,18 @@ class RangeDater extends Component {
       </div>
     );
   }
-someMethod = e => {
-  this.setState({ langSelection: e.target.value }, () => {
-  });
-  if(e.target.value==="Date"){
-  this.setState({startTrans:'Start Date'})
-  this.setState({endTrans:'End Date'})
-  }else if(e.target.value==="Tanggal"){
-    this.setState({startTrans:'mulai tanggal'})
-    this.setState({endTrans:'tanggal akhir'})
+  someMethod = e => {
+    this.setState({ langSelection: e.target.value }, () => {});
+    if (e.target.value === "Date") {
+      this.setState({ startTrans: "Start Date" });
+      this.setState({ endTrans: "End Date" });
+    } else if (e.target.value === "Tanggal") {
+      this.setState({ startTrans: "mulai tanggal" });
+      this.setState({ endTrans: "tanggal akhir" });
+    } else if (e.target.value === "Fecha") {
+      this.setState({ startTrans: "fecha de inicio" });
+      this.setState({ endTrans: "fecha final" });
     }
-   else if(e.target.value==="Fecha"){
-      this.setState({startTrans:'fecha de inicio'})
-      this.setState({endTrans:'fecha final'})
-      }
   };
 }
 

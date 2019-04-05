@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Label } from "reactstrap";
 
-
 class Select extends Component {
   state = {
     incomingValues: ""
@@ -15,17 +14,18 @@ class Select extends Component {
           className="form-control"
           onChange={this.someMethod}
         >
-        <option value=''>Select a value</option>
+          <option value="">Select a value</option>
           {this.props.options.map(option => (
             <option key={option.value} value={option.value}>
               {option.value}
             </option>
           ))}
         </select>
-        {!!this.props.error &&
-          this.props.touched && (
-            <div style={{ color: 'red', marginTop: '.5rem' }}>{this.props.error}</div>
-          )}
+        {!!this.props.error && this.props.touched && (
+          <div style={{ color: "red", marginTop: ".5rem" }}>
+            {this.props.error}
+          </div>
+        )}
       </div>
     );
   }

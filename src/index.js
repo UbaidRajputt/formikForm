@@ -4,14 +4,20 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "react-dates/lib/css/_datepicker.css";
 import "./index.css";
 import App from "./App";
+import Popup from "./components/NavigationErrorPopup";
 import * as serviceWorker from "./serviceWorker";
-import {BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 ReactDOM.render(
-  <Router>
-    <Switch>
-      <Route path="/" name="Home" component={App} />
-    </Switch>
-  </Router>,
+  <HashRouter
+    getUserConfirmation={(message, callback) => {
+      ReactDOM.render(
+        <Popup message={message} callback={callback} />,
+        document.getElementById("modal")
+      );
+    }}
+  >
+    <App />
+  </HashRouter>,
   document.getElementById("root")
 );
 

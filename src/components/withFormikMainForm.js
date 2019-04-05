@@ -1,5 +1,5 @@
-import React, { Component,TextField } from "react";
-import { withFormik, Field, Form, FieldArray  } from "formik";
+import React, { Component } from "react";
+import { withFormik, Field, Form } from "formik";
 import { customInputForm } from "./customInputs";
 import * as Yup from "yup";
 import SingleDater from "./singleDatePicker";
@@ -10,8 +10,11 @@ import "react-dates/lib/css/_datepicker.css";
 import CustomMultipleSelect from "./customMultipeSelect";
 import Image from "./imageUploader";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import PhoneNumber from './PhoneNumbers';
-import { Row, FormGroup } from "react-bootstrap";
+import PhoneNumber from "./PhoneNumbers";
+import { FormGroup } from "react-bootstrap";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import { Prompt } from "react-router-dom";
 
 const styles = {
   color: "red",
@@ -104,7 +107,9 @@ class MyForm extends Component {
     divDisabled: false,
     popupFieldDisabled: false,
     showComponent: false,
-    modalTwo: false
+    modalTwo: false,
+    showSweetError: false,
+    isBlocking: false
   };
   toggle = () => {
     this.setState(prevState => ({
@@ -117,15 +122,26 @@ class MyForm extends Component {
       modalTwo: !prevState.modalTwo
     }));
   };
+  someMethod = e => {
+    if (e.target.value.length > 0) {
+      this.setState({ isBlocking: true });
+    }
+    if (e.target.value.length === 0) {
+      this.setState({ isBlocking: false });
+    }
+  };
   render() {
+    let { isBlocking } = this.state;
     const {
       handleSubmit,
       values,
       setFieldValue,
       touched,
       errors,
-      setFieldTouched
+      setFieldTouched,
+      dirty
     } = this.props;
+
     if (
       values.password === values.oldpass &&
       values.newpass !== "" &&
@@ -136,165 +152,168 @@ class MyForm extends Component {
       this.setState({ divDisabled: false });
     }
     return (
-      <Form onSubmit={handleSubmit}>
-        <h1>Formik Form</h1>
-        <FormGroup>
-          <Field
-            name="email"
-            placeholder="Email Address"
-            type={"email"}
-            component={customInputForm}
-          />
-          {errors.email && touched.email && (
-            <div style={styles}>{errors.email}</div>
-          )}
-        </FormGroup>
-        <FormGroup>
-          <Field
-            name="name"
-            placeholder="Name"
-            type={"text"}
-            component={customInputForm}
-          />
-          {errors.name && touched.name && (
-            <div style={styles}>{errors.name}</div>
-          )}
-        </FormGroup>
-        <FormGroup>
-          <Field
-            name="password"
-            placeholder="Password"
-            type={"password"}
-            component={customInputForm}
-          />
-          {errors.password && touched.password && (
-            <div style={styles}>{errors.password}</div>
-          )}
-        </FormGroup>
-        <FormGroup>
-          <Field name="list" options={options} component={Select} />
-          {errors.list && touched.list && (
-            <div style={styles}>{errors.list}</div>
-          )}
-        </FormGroup>
-        <FormGroup>
-          <Field
-            name="topics"
-            value={values.topics}
-            onChange={setFieldValue}
-            onBlur={setFieldTouched}
-            error={errors.topics}
-            touched={touched.topics}
-            options={multipleOptions}
-            component={CustomMultipleSelect}
-          />
-        </FormGroup>
-        <FormGroup>
-          <Field name="singledatepicker" component={SingleDater} />
-          {errors.singledatepicker && touched.singledatepicker && (
-            <div style={styles}>{errors.singledatepicker}</div>
-          )}
-        </FormGroup>
-        <FormGroup>
-          <Field name="rangedatepicker" component={RangeDater} />
-          {errors.startDate && touched.startDate && (
-            <div style={styles}>{errors.startDate}</div>
-          )}
-          {errors.endDate && touched.endDate && (
-            <div style={styles}>{errors.endDate}</div>
-          )}
-        </FormGroup>
-        <FormGroup>
-          <Button outline color="primary" onClick={this.toggle}>
-            Reset Password
-          </Button>{" "}
-          {this.state.modal === true ? (
-            <Modal isOpen={this.state.modal}>
-              <ModalHeader>Password Reset</ModalHeader>
-              <ModalBody>
-                <FormGroup>
-                  <Field
-                    name="oldpass"
-                    placeholder="Enter old password"
-                    type={"password"}
-                    component={customInputForm}
-                  />
-                  {errors.oldpass && touched.oldpass && (
-                    <div style={styles}>{errors.oldpass}</div>
+      <div>
+        <Prompt when={isBlocking} message="Are you sure?" />
+        <Form onSubmit={handleSubmit} onChange={this.someMethod}>
+          <h1>Formik Form</h1>
+          <FormGroup>
+            <Field
+              name="email"
+              placeholder="Email Address"
+              type={"email"}
+              component={customInputForm}
+            />
+            {errors.email && touched.email && (
+              <div style={styles}>{errors.email}</div>
+            )}
+          </FormGroup>
+          <FormGroup>
+            <Field
+              name="name"
+              placeholder="Name"
+              type={"text"}
+              component={customInputForm}
+            />
+            {errors.name && touched.name && (
+              <div style={styles}>{errors.name}</div>
+            )}
+          </FormGroup>
+          <FormGroup>
+            <Field
+              name="password"
+              placeholder="Password"
+              type={"password"}
+              component={customInputForm}
+            />
+            {errors.password && touched.password && (
+              <div style={styles}>{errors.password}</div>
+            )}
+          </FormGroup>
+          <FormGroup>
+            <Field name="list" options={options} component={Select} />
+            {errors.list && touched.list && (
+              <div style={styles}>{errors.list}</div>
+            )}
+          </FormGroup>
+          <FormGroup>
+            <Field
+              name="topics"
+              value={values.topics}
+              onChange={setFieldValue}
+              onBlur={setFieldTouched}
+              error={errors.topics}
+              touched={touched.topics}
+              options={multipleOptions}
+              component={CustomMultipleSelect}
+            />
+          </FormGroup>
+          <FormGroup>
+            <Field name="singledatepicker" component={SingleDater} />
+            {errors.singledatepicker && touched.singledatepicker && (
+              <div style={styles}>{errors.singledatepicker}</div>
+            )}
+          </FormGroup>
+          <FormGroup>
+            <Field name="rangedatepicker" component={RangeDater} />
+            {errors.startDate && touched.startDate && (
+              <div style={styles}>{errors.startDate}</div>
+            )}
+            {errors.endDate && touched.endDate && (
+              <div style={styles}>{errors.endDate}</div>
+            )}
+          </FormGroup>
+          <FormGroup>
+            <Button outline color="primary" onClick={this.toggle}>
+              Reset Password
+            </Button>{" "}
+            {this.state.modal === true ? (
+              <Modal isOpen={this.state.modal}>
+                <ModalHeader>Password Reset</ModalHeader>
+                <ModalBody>
+                  <FormGroup>
+                    <Field
+                      name="oldpass"
+                      placeholder="Enter old password"
+                      type={"password"}
+                      component={customInputForm}
+                    />
+                    {errors.oldpass && touched.oldpass && (
+                      <div style={styles}>{errors.oldpass}</div>
+                    )}
+                  </FormGroup>
+                  <FormGroup>
+                    <Field
+                      name="newpass"
+                      placeholder="New Password"
+                      type={"password"}
+                      component={customInputForm}
+                    />
+                    {errors.newpass && touched.newpass && (
+                      <div style={styles}>{errors.newpass}</div>
+                    )}
+                  </FormGroup>
+                  <FormGroup>
+                    <Field
+                      name="renternewpass"
+                      placeholder="Re-enter Password"
+                      type={"password"}
+                      component={customInputForm}
+                    />
+                    {errors.renternewpass && touched.renternewpass && (
+                      <div style={styles}>{errors.renternewpass}</div>
+                    )}
+                  </FormGroup>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    type="button"
+                    onClick={this.toggle}
+                    disabled={this.state.disabled}
+                    color="danger"
+                  >
+                    Reset
+                  </Button>{" "}
+                  <Button type="button" onClick={this.toggle} color="danger">
+                    Cancel Popup
+                  </Button>{" "}
+                  <hr />
+                  {values.newpass === values.renternewpass ? null : (
+                    <div style={styles}>Passwords Don't match</div>
                   )}
-                </FormGroup>
-                <FormGroup>
-                  <Field
-                    name="newpass"
-                    placeholder="New Password"
-                    type={"password"}
-                    component={customInputForm}
-                  />
-                  {errors.newpass && touched.newpass && (
-                    <div style={styles}>{errors.newpass}</div>
-                  )}
-                </FormGroup>
-                <FormGroup>
-                  <Field
-                    name="renternewpass"
-                    placeholder="Re-enter Password"
-                    type={"password"}
-                    component={customInputForm}
-                  />
-                  {errors.renternewpass && touched.renternewpass && (
-                    <div style={styles}>{errors.renternewpass}</div>
-                  )}
-                </FormGroup>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  type="button"
-                  onClick={this.toggle}
-                  disabled={this.state.disabled}
-                  color="danger"
-                >
-                  Reset
-                </Button>{" "}
-                <Button type="button" onClick={this.toggle} color="danger">
-                  Cancel Popup
-                </Button>{" "}
-                <hr />
-                {values.newpass === values.renternewpass ? null : (
-                  <div style={styles}>Passwords Don't match</div>
-                )}
-              </ModalFooter>
-            </Modal>
-          ) : (
-            <div />
-          )}
-        </FormGroup>
-        <FormGroup>
-          <Button onClick={this.toggleTwo}>Add Phone Numbers</Button>
-          {this.state.modalTwo === true ? (
-            <Modal isOpen={this.state.modalTwo} toggle={this.toggleTwo}>
-              <ModalHeader>Add Phone Numbers</ModalHeader>
-              <ModalBody>
-                <FormGroup>
-                  <Field name='PhoneNumbers' component={PhoneNumber}/>
-                </FormGroup>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="primary" onClick={this.toggleTwo}>
-                  Close
-                </Button>{" "}
-              </ModalFooter>
-            </Modal>
-          ) : null}
-        </FormGroup>
-        <FormGroup>
-          <Image />
-        </FormGroup>
-        <FormGroup>
-          <Button type="submit" size="lg" color="success">
-            Submit
-          </Button>
-        </FormGroup>
-      </Form>
+                </ModalFooter>
+              </Modal>
+            ) : (
+              <div />
+            )}
+          </FormGroup>
+          <FormGroup>
+            <Button onClick={this.toggleTwo}>Add Phone Numbers</Button>
+            {this.state.modalTwo === true ? (
+              <Modal isOpen={this.state.modalTwo} toggle={this.toggleTwo}>
+                <ModalHeader>Add Phone Numbers</ModalHeader>
+                <ModalBody>
+                  <FormGroup>
+                    <Field name="PhoneNumbers" component={PhoneNumber} />
+                  </FormGroup>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="primary" onClick={this.toggleTwo}>
+                    Close
+                  </Button>{" "}
+                </ModalFooter>
+              </Modal>
+            ) : null}
+          </FormGroup>
+          <FormGroup>
+            <Image />
+          </FormGroup>
+          <FormGroup>
+            <Button type="submit" size="lg" color="success">
+              Submit
+            </Button>
+          </FormGroup>
+        </Form>
+      </div>
     );
   }
 }
@@ -313,11 +332,10 @@ const MyEnhancedForm = withFormik({
     topics: [],
     PhoneNumbers: [
       {
-          New: "",
-          Recheck: "",
+        New: "",
+        Recheck: ""
       }
-  ],
-
+    ]
   }),
 
   // Custom sync validation
@@ -325,6 +343,7 @@ const MyEnhancedForm = withFormik({
     const validationSchema = getValidationSchema(values);
     try {
       validationSchema.validateSync(values, { abortEarly: false });
+
       return {};
     } catch (error) {
       return getErrorsFromValidationError(error);
@@ -332,11 +351,14 @@ const MyEnhancedForm = withFormik({
   },
   handleSubmit: (values, { setSubmitting }) => {
     setTimeout(() => {
-      console.log("Values of PhoneNumber ", values.PhoneNumber);
+      this.setState({
+        isBlocking: false
+      });
       alert(JSON.stringify(values, null, 2));
       setSubmitting(false);
     }, 1000);
   },
   displayName: "BasicForm"
 })(MyForm);
+
 export default MyEnhancedForm;

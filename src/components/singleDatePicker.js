@@ -85,8 +85,7 @@ class SingleDater extends Component {
     );
   }
   someMethod(e) {
-    this.setState({ langSelection: e.target.value }, () => {
-    });
+    this.setState({ langSelection: e.target.value }, () => {});
   }
 }
 
